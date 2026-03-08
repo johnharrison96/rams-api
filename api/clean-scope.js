@@ -48,12 +48,22 @@ Scope text:
 ${scopeText}
 `;
 
-    const response = await openai.responses.create({
+    const response = await openai.chat.completions.create({
       model: "gpt-4.1-mini",
-      input: prompt,
+      messages: [
+        {
+          role: "system",
+          content: "You are an expert UK construction assistant. Return JSON only."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      temperature: 0.2,
     });
 
-    const output = response.output_text;
+    const output = response.choices[0].message.content;
     const parsed = JSON.parse(output);
 
     return res.status(200).json(parsed);
